@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SurakshAI - Fraud Risk Detector</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body, html { height: 100%; background: #000; color: #fff; overflow-x: hidden; }
+
+        .page-container {
+            display: flex;
+            flex-direction: column;
+            width: 100vw;
+            height: 300vh;
+            transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        .page {
+            width: 100vw; height: 100vh;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            background-size: cover; background-position: center;
+        }
+
+        #page-1 { background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0)), url('background.jpeg'); cursor: pointer; }
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 10px;
+            object-fit: contain;
+        }
+        #page-2 { background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('background1.jpeg'); }
+        #page-3 { 
+            background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('s.jpeg'); 
+            justify-content: flex-start; padding-top: 30px; overflow-y: auto; 
+        }
+
+        .card {
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 25px; border-radius: 20px;
+            width: 90%; max-width: 500px;
+            border: 1px solid rgba(0, 238, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        select {
+            padding: 15px; width: 280px; border-radius: 12px;
+            background: #111; color: #0ef; border: 2px solid #0ef;
+            font-size: 1.1rem; cursor: pointer; outline: none;
+        }
+
+        textarea {
+            width: 100%; height: 120px; background: rgba(0,0,0,0.4);
+            color: #fff; padding: 15px; border-radius: 12px;
+            border: 1px solid #444; font-size: 1rem; margin: 15px 0; outline: none; resize: none;
+        }
+
+        .input-controls {
+            position: absolute; right: 10px; bottom: 25px; display: flex; gap: 10px;
+        }
+
+        .ctrl-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; filter: drop-shadow(0 0 5px #0ef); }
+
+        .btn {
+            width: 100%; padding: 16px; background: #0ef;
+            color: #000; font-weight: bold; border: none;
+            border-radius: 12px; cursor: pointer; font-size: 1.1rem;
+            transition: 0.3s;
+        }
+
+        .btn:hover { background: #00cccc; transform: translateY(-2px); }
+
+        .res-box { margin-top: 20px; display: none; }
+        .prob-label { text-align: center; color: #888; font-size: 0.9rem; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+
+        .circle-container { position: relative; width: 140px; height: 140px; margin: 0 auto 15px; }
+        svg { transform: rotate(-90deg); width: 140px; height: 140px; }
+        circle { fill: none; stroke-width: 10; stroke-linecap: round; }
+        .bg-circle { stroke: #222; }
+        .fg-circle {
+            stroke: #0ef; stroke-dasharray: 440; stroke-dashoffset: 440;
+            transition: stroke-dashoffset 1.2s ease-out, stroke 0.5s ease;
+        }
+
+        .percentage-text {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 1.8rem; font-weight: bold;
+        }
+
+        .keyword-tag {
+            display: inline-block; background: rgba(255, 77, 77, 0.2);
+            color: #ff4d4d; padding: 4px 10px; border-radius: 6px;
+            font-size: 0.8rem; margin: 3px; border: 1px solid #ff4d4d;
+        }
+
+        .res-line { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #333; }
+        .label { color: #aaa; font-size: 0.9rem; }
+        .val { font-weight: 600; }
+        
+        .helpline-box {
+            margin-top: 20px; padding: 15px; background: #ff4d4d;
+            color: white; border-radius: 12px; text-align: center; font-weight: bold;
+        }
+
+        .precautions-box {
+            margin: 15px 0; padding: 15px; background: rgba(0, 238, 255, 0.05);
+            border-left: 4px solid #0ef; border-radius: 4px;
+        }
+        .precautions-box h4 { color: #0ef; margin-bottom: 5px; font-size: 0.95rem; }
+        .precautions-box ul { list-style: none; font-size: 0.85rem; color: #ccc; line-height: 1.4; }
+    </style>
+</head>
+<body>
+
+    <div class="page-container" id="main">
+        
+        <section class="page" id="page-1" onclick="nav(1)">
+            <img src="logo.jpeg" alt="Logo" class="logo"> 
+            <h1 style="font-size: 3.2rem; letter-spacing: 2px;">SURAKSH<span style="color: #0ef;">AI</span></h1>
+            <p style="color: white; font-weight: 300;"><b>AI Fraud Risk Detection & Awareness</b></p>
+            <div style="margin-top: 50px; padding: 10px 20px; border: 1px solid #0ef; border-radius: 30px; font-size: 0.8rem; color: #0ef;">TAP TO PROTECT</div>
+        </section>
+
+        <section class="page" id="page-2">
+            <h2 style="margin-bottom: 30px;">Choose Language</h2>
+            <select id="lang" onchange="applyLang(this.value)">
+                <option value="" disabled selected>Select Language</option>
+                <option value="en">English</option>
+                <option value="hi">हिन्दी (Hindi)</option>
+                <option value="te">తెలుగు (Telugu)</option>
+            </select>
+        </section>
+
+        <section class="page" id="page-3">
+            <div class="card">
+                <h2 id="p3h" style="font-size: 1.2rem; color: #0ef;">Analyze Message Risk</h2>
+                <div style="position: relative;">
+                    <textarea id="userInput" placeholder="Paste message, use mic, or upload a file..."></textarea>
+                    <div class="input-controls">
+                        <label for="fileInput" class="ctrl-btn" title="Upload File">📁</label>
+                        <input type="file" id="fileInput" style="display:none" onchange="handleFileUpload(this)">
+                        <button class="ctrl-btn" onclick="startVoice()" title="Voice Input">🎤</button>
+                    </div>
+                </div>
+                <button class="btn" onclick="runAnalysis()" id="btnText">CHECK RISK SCORE</button>
+
+                <div class="res-box" id="results">
+                    <div class="prob-label">Scam Probability Score</div>
+                    <div class="circle-container">
+                        <svg>
+                            <circle class="bg-circle" cx="70" cy="70" r="65"></circle>
+                            <circle id="score-circle" class="fg-circle" cx="70" cy="70" r="65"></circle>
+                        </svg>
+                        <div class="percentage-text" id="v1">0%</div>
+                    </div>
+                    <div id="keyword-container" style="margin-bottom: 15px; text-align: center;"></div>
+
+                    <div class="res-line"><span class="label" id="lblRisk">Risk Classification:</span><span class="val" id="v2">Safe</span></div>
+                    <div class="res-line"><span class="label" id="lblType">Fraud Type:</span><span class="val" id="v3">None</span></div>
+                    
+                    <div class="precautions-box" id="precautions">
+                        <h4 id="preTitle">Actionable Guidance</h4>
+                        <ul id="preList"></ul>
+                    </div>
+
+                    <div class="helpline-box">
+                        🚨 CYBERCRIME HELPLINE: 1930
+                    </div>
+                </div>
+            </div>
+            <button onclick="nav(0)" style="margin: 20px 0; background: none; border: none; color: #666; cursor: pointer;">Reset System</button>
+        </section>
+    </div>
+
+    <script>
+        const translations = {
+            'en': {
+                p3h: "SMS & File Risk Analysis", btn: "CHECK FOR SCAMS",
+                l2: "Risk Level", l3: "Fraud Type", pre: "Safety Measures:",
+                speech: "Analysis complete. The risk level is {risk} and the fraud type detected is {type}.",
+                types: { none: "No Scam Detected", upi: "UPI/Payment Fraud", lot: "Lottery/Gift Scam", job: "Fake Job Offer", phi: "Phishing Attempt" },
+                risks: { safe: "Safe", suspicious: "Suspicious", high: "High Risk" },
+                steps: {
+                    upi: ["NEVER enter your UPI PIN to receive money.", "Verify the requester's name before clicking 'Pay'.", "Banks don't ask for PIN/OTP via SMS."],
+                    job: ["Real companies never ask for registration fees.", "Beware of 'Task-based' Telegram groups.", "Cross-check the job on the official website."],
+                    lot: ["You cannot win a lottery you didn't enter.", "Asking for 'Tax/Processing fees' is a scam.", "Do not call back the number provided."],
+                    phi: ["Check if the link starts with 'https://'.", "Look for spelling errors in the URL.", "Don't click links for KYC updates."],
+                    none: ["Don't share OTPs with strangers.", "Report suspicious numbers to 1930.", "Keep your banking apps updated."]
+                }
+            },
+            'hi': {
+                p3h: "संदेश और फ़ाइल जोखिम विश्लेषण", btn: "धोखाधड़ी की जांच करें",
+                l2: "जोखिम स्तर", l3: "घोटाले का प्रकार", pre: "सुरक्षा के उपाय:",
+                speech: "विश्लेषण पूरा हुआ। जोखिम स्तर {risk} है और घोटाले का प्रकार {type} है।",
+                types: { none: "कोई खतरा नहीं", upi: "UPI धोखाधड़ी", lot: "लॉटरी घोटाला", job: "फर्जी नौकरी", phi: "फिशिंग हमला" },
+                risks: { safe: "सुरक्षित", suspicious: "संदिग्ध", high: "उच्च जोखिम" },
+                steps: {
+                    upi: ["पैसे प्राप्त करने के लिए कभी भी पिन न डालें।", "पेमेंट से पहले नाम की जांच करें।", "बैंक कॉल/SMS पर पिन नहीं मांगते।"],
+                    job: ["असली कंपनियां कभी भी पैसे नहीं मांगती हैं।", "टेलीग्राम टास्क ग्रुप्स से सावधान रहें।", "ऑफिशियल वेबसाइट पर चेक करें।"],
+                    lot: ["बिना टिकट के आप इनाम नहीं जीत सकते।", "टैक्स के नाम पर पैसे मांगना धोखाधड़ी है।", "नंबर को ब्लॉक करें।"],
+                    phi: ["लिंक 'https://' से शुरू होना चाहिए।", "लिंक की स्पेलिंग ध्यान से देखें।", "KYC अपडेट के लिए लिंक पर क्लिक न करें।"],
+                    none: ["अजनबियों के साथ ओटीपी साझा न करें।", "1930 पर संदिग्ध नंबरों की रिपोर्ट करें।"]
+                }
+            },
+            'te': {
+                p3h: "మెసేజ్ మరియు ఫైల్ విశ్లేషణ", btn: "తనిఖీ చేయండి",
+                l2: "రిస్క్ లెవల్", l3: "మోసం రకం", pre: "తీసుకోవాల్సిన జాగ్రత్తలు:",
+                speech: "విశ్లేషణ పూర్తయింది. రిస్క్ స్థాయి {risk} మరియు మోసం రకం {type}.",
+                types: { none: "ఏమీ లేదు", upi: "UPI మోసం", lot: "లాటరీ మోసం", job: "జాబ్ స్కామ్", phi: "ఫిషింగ్ దాడి" },
+                risks: { safe: "సురక్షితం", suspicious: "అనుమానాస్పదం", high: "అత్యంత ప్రమాదకరం" },
+                steps: {
+                    upi: ["డబ్బు పొందడానికి పిన్ ఎంటర్ చేయకండి.", "పేరు సరిచూసుకోండి.", "బ్యాంకులు పిన్/ఓటిపి అడగవు."],
+                    job: ["నిజమైన కంపెనీలు ఫీజు అడగవు.", "టెలిగ్రామ్ టాస్క్ గ్రూపులతో జాగ్రత్త.", "వెబ్సైట్ వెరిఫై చేయండి."],
+                    lot: ["టికెట్ లేకుండా లాటరీ రాదు.", "డబ్బులు ముందుగా అడిగితే మోసమే.", "ఆ నంబర్ ని బ్లాక్ చేయండి."],
+                    phi: ["లింక్ లో 'https' ఉందో లేదో చూడండి.", "స్పెల్లింగ్ తప్పులు గమనించండి.", "KYC కోసం లింక్ క్లిక్ చేయకండి."],
+                    none: ["ఎవరికీ OTP చెప్పకండి.", "1930 కి కాల్ చేసి రిపోర్ట్ చేయండి."]
+                }
+            }
+        };
+
+        const keyBank = {
+            upi: ['upi', 'pin', 'paytm', 'gpay', 'phonepe', 'request', 'పిన్', 'पिन'],
+            job: ['job', 'salary', 'hiring', 'task', 'part-time', 'telegram', 'уద్యోగం', 'नौकरी'],
+            lot: ['won', 'lottery', 'prize', 'crore', 'gift', 'lucky', 'లాటరీ', 'लॉटरी'],
+            phi: ['click', 'link', 'http', 'kyc', 'block', 'update', 'లింక్', 'लिंक', 'ఓటిపి', 'otp']
+        };
+
+        let currentLang = 'en';
+
+        function nav(i) { document.getElementById('main').style.transform = `translateY(-${i * 100}vh)`; }
+
+        function applyLang(l) {
+            currentLang = l;
+            const d = translations[l];
+            document.getElementById('p3h').innerText = d.p3h;
+            document.getElementById('btnText').innerText = d.btn;
+            document.getElementById('preTitle').innerText = d.pre;
+            document.getElementById('lblRisk').innerText = d.l2 + ":";
+            document.getElementById('lblType').innerText = d.l3 + ":";
+            setTimeout(() => nav(2), 500);
+        }
+
+        // --- NEW: FILE UPLOAD HANDLER ---
+        function handleFileUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('userInput').value = e.target.result;
+                // Automatically run analysis after upload
+                runAnalysis();
+            };
+            reader.readAsText(file);
+        }
+
+        function speakResults(risk, type) {
+            const synth = window.speechSynthesis;
+            const d = translations[currentLang];
+            let text = d.speech.replace("{risk}", risk).replace("{type}", type);
+            
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = currentLang === 'te' ? 'te-IN' : (currentLang === 'hi' ? 'hi-IN' : 'en-US');
+            utter.rate = 0.9;
+            synth.speak(utter);
+        }
+
+        function startVoice() {
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRec) return alert("Browser voice not supported");
+    
+    const rec = new SpeechRec();
+    rec.lang = currentLang === 'te' ? 'te-IN' : (currentLang === 'hi' ? 'hi-IN' : 'en-US');
+    
+    // ADD THESE TWO LINES FOR SPEED:
+    rec.continuous = false; // Stops listening as soon as you pause
+    rec.interimResults = true; // Shows text while you are still speaking
+    
+    rec.onresult = (e) => {
+        const transcript = e.results[0][0].transcript;
+        document.getElementById('userInput').value = transcript;
+        
+        // Only run analysis once the speech is "final" to avoid lag
+        if (e.results[0].isFinal) {
+            runAnalysis();
+        }
+    };
+    rec.start();
+}
+        function runAnalysis() {
+            const txt = document.getElementById('userInput').value.toLowerCase();
+            if(!txt.trim()) return alert("Please enter text or upload a file first!");
+            
+            const d = translations[currentLang];
+            let score = 0, typeKey = "none", foundKeys = [];
+
+            Object.keys(keyBank).forEach(key => {
+                keyBank[key].forEach(k => {
+                    if(txt.includes(k)) {
+                        if(!foundKeys.includes(k)) foundKeys.push(k);
+                        typeKey = key;
+                    }
+                });
+
+            });
+
+            if(foundKeys.length > 0) score = Math.min(foundKeys.length * 25, 98);
+            if(foundKeys.length == 0 && txt.length > 5) score = 12;
+
+            const circle = document.getElementById('score-circle');
+            const percentText = document.getElementById('v1');
+            const offset = 440 - (score / 100) * 440;
+            
+            circle.style.strokeDashoffset = offset;
+            percentText.innerText = score + "%";
+
+            let riskKey = "safe", riskColor = "#00ff88";
+            if(score > 30) { riskKey = "suspicious"; riskColor = "#ffcc00"; }
+            if(score > 70) { riskKey = "high"; riskColor = "#ff4d4d"; }
+            
+            circle.style.stroke = riskColor;
+            percentText.style.color = riskColor;
+
+            const keyCont = document.getElementById('keyword-container');
+            keyCont.innerHTML = foundKeys.length > 0 ? `<p style='font-size:0.7rem; color:#888;'>SUSPICIOUS PATTERNS FOUND:</p>` : "";
+            foundKeys.forEach(k => {
+                keyCont.innerHTML += `<span class="keyword-tag">${k.toUpperCase()}</span>`;
+            });
+
+            const translatedRisk = d.risks[riskKey];
+            const translatedType = d.types[typeKey];
+
+            document.getElementById('v2').innerText = translatedRisk;
+            document.getElementById('v2').style.color = riskColor;
+            document.getElementById('v3').innerText = translatedType;
+
+            const list = document.getElementById('preList');
+            list.innerHTML = "";
+            d.steps[typeKey].forEach(s => {
+                const li = document.createElement('li');
+                li.innerText = "• " + s;
+                list.appendChild(li);
+            });
+
+            document.getElementById('results').style.display = "block";
+            document.getElementById('page-3').scrollTo({ top: 500, behavior: 'smooth' });
+
+            speakResults(translatedRisk, translatedType);
+        }
+    </script>
+</body>
+</html>
